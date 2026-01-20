@@ -1,0 +1,318 @@
+---
+title: "Multitouch Attribution in Modern Marketing Measurement"
+subtitle: "Bridging Marketing Mix Models, Incrementality, and Intra-Channel Optimization"
+author: 
+    name: "Miguel Conde"
+    email: "miguel.conde@sdggroup.com"
+    affiliations: 
+        - "Specialist Lead" 
+        - "AIIP - DATA SCIENCE"
+        - "SDG Group"
+date: "January 20, 2026"
+format:
+  pdf:
+    mermaid:
+        theme: default
+    toc: true
+    number-sections: true
+    colorlinks: true
+    geometry: 
+      - margin=1in
+    fig-width: 8
+    fig-height: 6
+    fig-pos: 'H'
+    keep-tex: false
+    embed-resources: true
+  html:
+    mermaid:
+        theme: dark
+    toc: true
+    toc-depth: 3
+    code-fold: true
+    embed-resources: true
+    fig-width: 10
+    fig-height: 7
+bibliography: references.bib
+---
+
+## **Executive Summary**
+
+Multitouch Attribution (MTA) aims to explain how marketing impact should be distributed across touchpoints, campaigns, or creatives. However, when used in isolation, MTA often conflates correlation with causation and can lead to misleading conclusions.
+
+Marketing Mix Models (MMM), on the other hand, provide robust, incremental and causal estimates at an aggregated channel level, but lack the granularity required for day-to-day execution.
+
+This whitepaper presents a unified measurement framework in which:
+
+-   **MMM establishes incremental impact at the channel level**
+
+-   **MTA distributes that incremental impact within channels**
+
+-   **Expectation–Maximization (EM)** is introduced as a principled and scalable method for credit allocation
+
+-   **Bayesian hierarchical models** are positioned as a complementary extension when uncertainty, cold start, or deep hierarchies matter
+
+The goal is not to promote a single model, but to provide a **decision-oriented measurement framework** that is rigorous, transparent, and operationally useful.
+
+## **PART I — Measurement Foundations**
+
+## **1. What Is Multitouch Attribution (MTA)?**
+
+Multitouch Attribution is a family of methods that aim to distribute marketing credit across multiple touchpoints involved in a customer journey.
+
+In practical terms, MTA tries to answer questions such as:
+
+-   Which campaigns or creatives contributed most to outcomes?
+
+-   How should performance be compared within a channel?
+
+-   Where should execution be optimized?
+
+### What MTA *Is*
+
+-   A **credit allocation problem**
+
+-   A tool for **intra-channel optimization**
+
+-   A way to bring structure to complex delivery data
+
+### What MTA *Is Not*
+
+-   A causal model by default
+
+-   A replacement for MMM
+
+-   A guarantee of incremental impact at granular levels
+
+A key limitation of traditional MTA approaches is that they often operate on user-level paths without a reliable counterfactual. As a result, they are highly sensitive to selection bias and timing effects.
+
+## **2. MTA and Marketing Mix Models (MMM)**
+
+MMM and MTA address **different but complementary questions**.
+
+| Question                                                      | MMM | MTA |
+|---------------------------------------------------------------|-----|-----|
+| How much impact does marketing have?                          | ✔️  | ❌  |
+| Which channels drive incremental results?                     | ✔️  | ❌  |
+| Which campaigns or creatives perform better within a channel? | ❌  | ✔️  |
+| Suitable for budget allocation                                | ✔️  | ❌  |
+| Suitable for execution optimization                           | ❌  | ✔️  |
+
+### Why MTA Without MMM Is Incomplete
+
+MTA models typically allocate credit based on observed exposure patterns. Without an incremental baseline, they cannot distinguish:
+
+-   correlation vs causation
+
+-   demand capture vs demand creation
+
+### Why MMM Without MTA Is Insufficient
+
+MMM produces reliable channel-level insights, but:
+
+-   execution teams need guidance below the channel level
+
+-   creative, campaign, and targeting decisions remain under-informed
+
+**Conclusion:**\
+MMM and MTA should not compete. They should be **connected**.
+
+## **3. Measurement, Causality, and (Quasi-)Experiments**
+
+Marketing measurement combines different levels of causal confidence.
+
+### Causality in MMM
+
+-   MMM estimates incremental impact via counterfactual modeling
+
+-   When well specified, MMM provides **causal estimates at an aggregated level**
+
+### Causality in MTA
+
+-   MTA is typically **model-based**, not causal
+
+-   It explains how observed outcomes can be allocated, not what would have happened otherwise
+
+### Role of Experiments
+
+Experiments remain the gold standard for causality:
+
+-   Geo-experiments
+
+-   Holdouts
+
+-   Creative tests
+
+In practice:
+
+-   MMM provides global causal grounding
+
+-   MTA provides granular structure
+
+-   Experiments validate and calibrate both
+
+## **PART II — MTA as a Credit Allocation Problem**
+
+## **4. MTA as a Credit Allocation Problem**
+
+At its core, MTA can be reframed as a **credit allocation problem under constraints**.
+
+We observe:
+
+-   aggregated outcomes (e.g., conversions, revenue, incremental contribution)
+
+-   detailed exposure data (campaigns, creatives, impressions, timing)
+
+We want to infer:
+
+-   how much each granular entity contributed to the observed total
+
+This structure appears in many domains:
+
+-   sales attribution across territories
+
+-   healthcare outcomes across providers
+
+-   marketing contribution across campaigns
+
+The defining constraint is:
+
+> **The allocated contributions must sum exactly to the observed total.**
+
+This reframing allows us to use well-understood statistical tools rather than ad-hoc heuristics.
+
+## **5. Expectation–Maximization (EM) for MTA**
+
+### Why EM Fits the Problem
+
+The Expectation–Maximization algorithm is designed for models with:
+
+-   latent variables
+
+-   observed aggregates
+
+-   structured constraints
+
+In MTA:
+
+-   latent variables represent campaign-level contributions
+
+-   observed data are aggregated outcomes
+
+-   constraints enforce conservation of total impact
+
+### What EM Guarantees
+
+-   **Mass conservation**: allocated credit always matches MMM totals
+
+-   **Stability**: small data changes lead to smooth updates
+
+-   **Scalability**: works with large datasets
+
+-   **Transparency**: assumptions are explicit and auditable
+
+### Interpretation
+
+EM does not “create” performance.\
+It **distributes known incremental impact** using exposure patterns and learned efficiencies.
+
+This makes EM particularly suitable as the **bridge between MMM and execution-level optimization**.
+
+## **6. Potential Pitfalls of EM for MTA**
+
+EM is powerful, but not foolproof.
+
+### Identifiability
+
+If two campaigns have identical exposure patterns, the model cannot distinguish them. EM will distribute credit arbitrarily unless additional structure is introduced.
+
+### Silent Overfitting
+
+Likelihood can increase even when the model is fitting noise. Without regularization and stability checks, results may appear plausible but be unreliable.
+
+### Cold Start
+
+New campaigns or creatives with limited history may receive unstable estimates unless pooling or priors are used.
+
+### Sensitivity to Exposure Design
+
+Poorly defined exposure signals (e.g., raw impressions without saturation or carryover) can distort attribution.
+
+**Key takeaway:**\
+EM requires **careful modeling choices**, not blind application.
+
+## **7. Modeling Alternatives: Bayesian Inference and Variational Inference**
+
+Bayesian hierarchical models extend EM by introducing uncertainty and structured pooling.
+
+### What Bayesian Models Add
+
+-   Partial pooling across campaigns, creatives, or groups
+
+-   Natural handling of cold start
+
+-   Posterior distributions instead of point estimates
+
+-   Explicit uncertainty quantification
+
+### Trade-offs
+
+| Aspect           | EM      | Bayesian (VI) |
+|------------------|---------|---------------|
+| Scalability      | High    | Medium        |
+| Complexity       | Low     | High          |
+| Interpretability | High    | Medium        |
+| Uncertainty      | ❌      | ✔️            |
+| Cold start       | Limited | Strong        |
+
+### Practical Positioning
+
+-   EM is often the **right production baseline**
+
+-   Bayesian approaches are valuable when:
+
+    -   uncertainty matters for decisions
+
+    -   data are sparse
+
+    -   hierarchies are deep
+
+## **PART III — FAQ and Defensive Q&A**
+
+## **8. FAQ and Defensive Q&A**
+
+This section consolidates common questions from Analytics, Finance, Marketing, and Legal stakeholders.
+
+### Does this model create or destroy revenue?
+
+No. All allocations strictly preserve MMM totals.
+
+### Is this causal?
+
+The total impact is causal (from MMM). The allocation within channels is model-based.
+
+### Can this be audited?
+
+Yes. The methodology is transparent, reproducible, and version-controlled.
+
+### Why not use user-level MTA only?
+
+Because user-level attribution alone cannot reliably identify incrementality.
+
+### Can this guide optimization?
+
+Yes—**as a prioritization signal**, not as a substitute for experimentation.
+
+## **Final Takeaway**
+
+> **MMM determines how much marketing works.\
+> MTA determines how to execute better within that reality.**
+
+A robust measurement strategy recognizes that:
+
+-   no single model answers all questions
+
+-   causality and granularity must be handled separately
+
+-   rigor and usability must coexist
+
+This framework provides a principled way to connect strategy, analytics, and execution—without over-promising or oversimplifying.
